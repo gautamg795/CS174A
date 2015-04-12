@@ -14,11 +14,10 @@ var zAxis = 2;
 var axis = 0;
 var theta = [ 0, 0, 0 ];
 
-var thetaLoc, translateLoc, vColorLoc;
+var thetaLoc, modelViewLoc, vColorLoc;
 
 
-var pMatrix;
-var projection;
+var projectionLoc;
 
 
 var colorIndex = 0;
@@ -77,8 +76,8 @@ window.onload = function init()
     gl.enableVertexAttribArray( vPosition );
 
     thetaLoc = gl.getUniformLocation(program, "theta");
-    translateLoc = gl.getUniformLocation(program, "translate"); 
-    projection = gl.getUniformLocation( program, "projection" );
+    modelViewLoc = gl.getUniformLocation(program, "modelView");
+    projectionLoc = gl.getUniformLocation( program, "projection");
 
     //event listeners for buttons
     
@@ -193,8 +192,8 @@ function render()
 
     theta[axis] += 6.0; // 60 rpm?
     gl.uniform3fv(thetaLoc, theta);
-    pMatrix = perspective(camera.fovy, camera.aspect, camera.near, camera.far);
-    gl.uniformMatrix4fv( projection, false, flatten(pMatrix) );
+    var projectionMatrix = perspective(camera.fovy, camera.aspect, camera.near, camera.far);
+    gl.uniformMatrix4fv( projectionLoc, false, flatten(projectionMatrix) );
     var models = [
         translate(10, 10, 10),
         translate(10, 10, -10),
