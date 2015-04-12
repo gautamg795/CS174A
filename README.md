@@ -1,5 +1,5 @@
 ### Assignment 1
-###### CS174A - Spring '15 - Prof. Friedman
+#### CS174A - Spring '15 - Prof. Friedman
 * * * 
 #### Project Requirements (Implemented)
 >1. Implement assignment cleanly/legibly with code comments and readme.
