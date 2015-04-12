@@ -16,17 +16,10 @@ var theta = [ 0, 0, 0 ];
 
 var thetaLoc, translateLoc, vColorLoc;
 
-var near = 2;
-var far = 100.0;
-
-var  fovy = 45.0;  // Field-of-view in Y direction angle (in degrees)
-var  aspect;       // Viewport aspect ratio
 
 var pMatrix;
 var projection;
-var eye;
-const at = vec3(0.0, 0.0, 0.0);
-const up = vec3(0.0, 1.0, 0.0);
+
 
 var colorIndex = 0;
 var colors = [
@@ -40,6 +33,16 @@ var colors = [
     [ 0.0, 1.0, 1.0, 1.0 ]   // cyan
 ];
 
+var camera = {
+    x : 0.0,
+    y : 0.0,
+    z : -50.0,
+    fovy : 45.0,
+    aspect : undefined,
+    near : 2.0,
+    far  : 100.0
+}
+
 window.onload = function init()
 {
     canvas = document.getElementById( "gl-canvas" );
@@ -50,7 +53,7 @@ window.onload = function init()
     colorCube();
 
     gl.viewport( 0, 0, canvas.width, canvas.height );
-    aspect =  canvas.width/canvas.height;
+    camera.aspect =  canvas.width/canvas.height;
     gl.clearColor( 0.0, 0.0, 0.0, 1.0 );
     
     gl.enable(gl.DEPTH_TEST);
@@ -165,7 +168,7 @@ function render()
 
     theta[axis] += 2.0;
     gl.uniform3fv(thetaLoc, theta);
-    pMatrix = perspective(fovy, aspect, near, far);
+    pMatrix = perspective(camera.fovy, camera.aspect, camera.near, camera.far);
     gl.uniformMatrix4fv( projection, false, flatten(pMatrix) );
     var translates = [
         translate(10, 10, 10),
@@ -177,10 +180,10 @@ function render()
         translate(-10, -10, 10),
         translate(-10, -10, -10)
     ];
-    var camera = translate(0, 0, -50);
+    var viewMatrix = translate(camera.x, camera.y, camera.z);
     for (var i = 0; i < translates.length; i++)
     {
-        translates[i] = mult(translates[i], camera);
+        translates[i] = mult(translates[i], viewMatrix);
         gl.uniformMatrix4fv(translateLoc, false, flatten(translates[i]))
         gl.uniform4fv(vColorLoc, colors[(colorIndex + i) % colors.length]);
         gl.drawArrays( gl.TRIANGLE_STRIP, 0, 14 );
