@@ -37,11 +37,12 @@ var camera = {
     x : 0.0,
     y : 0.0,
     z : -50.0,
+    heading : 0.0,
     fovy : 45.0,
     aspect : undefined,
     near : 2.0,
     far  : 100.0
-}
+};
 
 window.onload = function init()
 {
@@ -91,13 +92,48 @@ window.onload = function init()
         axis = zAxis;
     };
 
-    window.onkeypress = function(event) {
-        var key = String.fromCharCode(event.keyCode);
+    window.onkeydown = function(event) {
+        var key = event.keyCode > 48 ? String.fromCharCode(event.keyCode) : event.keyCode;
         switch (key)
         {
-            case 'c':
+            case 'C':
                 colorIndex++;
                 break;
+            case 'R':
+                camera.x = 0.0;
+                camera.y = 0.0;
+                camera.z = -50.0;
+                camera.heading = 0;
+                break;
+            case 'I':
+                var headingRad = radians(camera.heading);
+                camera.z += 0.25 * Math.cos(headingRad);
+                camera.x -= 0.25 * Math.sin(headingRad);
+                break;
+            case 'M':
+                var headingRad = radians(camera.heading);
+                camera.z -= 0.25 * Math.cos(headingRad);
+                camera.x += 0.25 * Math.sin(headingRad);
+                break;
+            case 'J':
+                camera.x += 0.25;
+                break;
+            case 'K':
+                camera.x -= 0.25;
+                break;
+            case 38: // Up arrow key
+                camera.y -= 0.25;
+                break;
+            case 40: //Down arrow key
+                camera.y += 0.25;
+                break;
+            case 39:
+                camera.heading += 1; // Right arrow key
+                break;
+            case 37:
+                camera.heading -=1; // Left arrow key
+                break;
+
         }
     };
         
@@ -169,10 +205,10 @@ function render()
         translate(-10, -10, 10),
         translate(-10, -10, -10)
     ];
-    var viewMatrix = translate(camera.x, camera.y, camera.z);
+    var viewMatrix = mult(rotate(camera.heading, [0, 1, 0]), translate(camera.x, camera.y, camera.z));
     for (var i = 0; i < translates.length; i++)
     {
-        translates[i] = mult(translates[i], viewMatrix);
+        translates[i] = mult(viewMatrix, translates[i]);
         gl.uniformMatrix4fv(translateLoc, false, flatten(translates[i]))
         gl.uniform4fv(vColorLoc, colors[(colorIndex + i) % colors.length]);
         gl.drawArrays( gl.TRIANGLE_STRIP, 0, 14 );
