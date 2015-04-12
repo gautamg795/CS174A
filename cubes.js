@@ -120,17 +120,6 @@ function colorCube()
         vec3(  0.5, -0.5, -0.5 )
     ];
 
-    var vertexColors = [
-        [ 0.0, 0.0, 0.0, 1.0 ],  // black
-        [ 1.0, 0.0, 0.0, 1.0 ],  // red
-        [ 1.0, 1.0, 0.0, 1.0 ],  // yellow
-        [ 0.0, 1.0, 0.0, 1.0 ],  // green
-        [ 0.0, 0.0, 1.0, 1.0 ],  // blue
-        [ 1.0, 0.0, 1.0, 1.0 ],  // magenta
-        [ 1.0, 1.0, 1.0, 1.0 ],  // white
-        [ 0.0, 1.0, 1.0, 1.0 ]   // cyan
-    ];
-
     // We need to parition the quad into two triangles in order for
     // WebGL to be able to render it.  In this case, we create two
     // triangles from the quad indices
