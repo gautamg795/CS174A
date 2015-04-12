@@ -79,18 +79,6 @@ window.onload = function init()
     modelViewLoc = gl.getUniformLocation(program, "modelView");
     projectionLoc = gl.getUniformLocation( program, "projection");
 
-    //event listeners for buttons
-    
-    document.getElementById( "xButton" ).onclick = function () {
-        axis = xAxis;
-    };
-    document.getElementById( "yButton" ).onclick = function () {
-        axis = yAxis;
-    };
-    document.getElementById( "zButton" ).onclick = function () {
-        axis = zAxis;
-    };
-
     window.onkeydown = function(event) {
         var key = event.keyCode > 48 ? String.fromCharCode(event.keyCode) : event.keyCode;
         switch (key)
