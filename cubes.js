@@ -17,9 +17,9 @@ var theta = [ 0, 0, 0 ];
 var thetaLoc, translateLoc, vColorLoc;
 
 var near = 2;
-var far = 32.0;
+var far = 100.0;
 
-var  fovy = 30.0;  // Field-of-view in Y direction angle (in degrees)
+var  fovy = 45.0;  // Field-of-view in Y direction angle (in degrees)
 var  aspect;       // Viewport aspect ratio
 
 var pMatrix;
@@ -51,7 +51,7 @@ window.onload = function init()
 
     gl.viewport( 0, 0, canvas.width, canvas.height );
     aspect =  canvas.width/canvas.height;
-    gl.clearColor( 1.0, 1.0, 1.0, 1.0 );
+    gl.clearColor( 0.0, 0.0, 0.0, 1.0 );
     
     gl.enable(gl.DEPTH_TEST);
 
@@ -168,11 +168,19 @@ function render()
     pMatrix = perspective(fovy, aspect, near, far);
     gl.uniformMatrix4fv( projection, false, flatten(pMatrix) );
     var translates = [
-    	translate(1, -1, -15),
-    	translate(1, -1, -5),
+        translate(10, 10, 10),
+        translate(10, 10, -10),
+        translate(10, -10, 10),
+        translate(10, -10, -10),
+        translate(-10, 10, 10),
+        translate(-10, 10, -10),
+        translate(-10, -10, 10),
+        translate(-10, -10, -10)
     ];
+    var camera = translate(0, 0, -50);
     for (var i = 0; i < translates.length; i++)
     {
+        translates[i] = mult(translates[i], camera);
         gl.uniformMatrix4fv(translateLoc, false, flatten(translates[i]))
         gl.uniform4fv(vColorLoc, colors[(colorIndex + i) % colors.length]);
         gl.drawArrays( gl.TRIANGLE_STRIP, 0, 14 );
