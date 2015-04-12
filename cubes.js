@@ -207,12 +207,12 @@ function render()
     var viewMatrix = mult(rotate(camera.heading, [0, 1, 0]), translate(camera.x, camera.y, camera.z));
     for (var i = 0; i < models.length; i++)
     {
-        models[i] = mult(viewMatrix, models[i]);
-        gl.uniformMatrix4fv(translateLoc, false, flatten(models[i]))
-        gl.uniform4fv(vColorLoc, colors[(colorIndex + i) % colors.length]);
-        gl.drawArrays( gl.TRIANGLE_STRIP, 0, 14 );
-        gl.uniform4fv(vColorLoc, [1, 1, 1, 1]);
-        gl.drawArrays( gl.LINES, 14, 24 );
+        models[i] = mult(viewMatrix, models[i]); // Create the model-view matrix
+        gl.uniformMatrix4fv(modelViewLoc, false, flatten(models[i])) // Send the model-view matrix
+        gl.uniform4fv(vColorLoc, colors[(colorIndex + i) % colors.length]); // Give each cube a unique color, send to shader
+        gl.drawArrays( gl.TRIANGLE_STRIP, 0, 14 ); // Draw the cube with triangle strips based on first 14 points in array
+        gl.uniform4fv(vColorLoc, [1, 1, 1, 1]); // Send white for the outlines
+        gl.drawArrays( gl.LINES, 14, 24 ); // Draw the outlines which are stored in the last 24 points in array
     }
     requestAnimFrame( render );
 
