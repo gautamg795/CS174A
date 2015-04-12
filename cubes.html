@@ -34,7 +34,9 @@ void main()
 		    0.0,  0.0, 1.0, 0.0,
 		    0.0,  0.0, 0.0, 1.0 );
 
-    gl_Position = projection * modelView * rz * ry * rx * vPosition;
+    mat4 scale = mat4(1.0 + .1 * c.x, 0.0, 0.0, 0.0, 0.0, 1.0 + .1 * c.x, 0.0, 0.0, 0.0, 0.0, 1.0 + .1 * c.x, 0.0, 0.0, 0.0, 0.0, 1.0);
+
+    gl_Position = projection * modelView * scale * rz * ry * rx * vPosition;
     fColor = vColor;
 } 
 </script>
