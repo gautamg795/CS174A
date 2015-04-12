@@ -12,7 +12,7 @@ var zAxis = 2;
 
 var axis = 0;
 var theta = [ 0, 0, 0 ];
-
+ // Approximately 45 degrees for fovy
 var thetaLoc, modelViewLoc, vColorLoc;
 
 
@@ -36,7 +36,7 @@ var camera = {
     y : 0.0,
     z : -50.0,
     heading : 0.0,
-    fovx : 72,
+    fovx : 73.0, // Approximately 45 degrees for fovy
     fovy : function() { return (2 * Math.atan(Math.tan(radians(this.fovx) / 2) * (1 / this.aspect))) * 180 / Math.PI; },
     aspect : undefined,
     near : 1.0,
@@ -103,6 +103,7 @@ window.onload = function init()
                 camera.y = 0.0;
                 camera.z = -50.0;
                 camera.heading = 0;
+                camera.fovx = 73.0;
                 break;
             case 'I':
                 var headingRad = radians(camera.heading);
