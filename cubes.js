@@ -36,7 +36,8 @@ var camera = {
     y : 0.0,
     z : -50.0,
     heading : 0.0,
-    fovy : 45.0,
+    fovx : 72,
+    fovy : function() { return (2 * Math.atan(Math.tan(radians(this.fovx) / 2) * (1 / this.aspect))) * 180 / Math.PI; },
     aspect : undefined,
     near : 1.0,
     far  : 100.0
@@ -195,7 +196,7 @@ function render()
 
     theta[axis] += 6.0; // 60 rpm?
     gl.uniform3fv(thetaLoc, theta);
-    var projectionMatrix = perspective(camera.fovy, camera.aspect, camera.near, camera.far);
+    var projectionMatrix = perspective(camera.fovy(), camera.aspect, camera.near, camera.far);
     gl.uniformMatrix4fv( projectionLoc, false, flatten(projectionMatrix) );
     var models = [
         translate(10, 10, 10),
