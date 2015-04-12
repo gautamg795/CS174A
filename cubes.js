@@ -114,10 +114,14 @@ window.onload = function init()
                 camera.x += 0.25 * Math.sin(headingRad);
                 break;
             case 'J':
-                camera.x += 0.25;
+                var headingRad = radians(camera.heading);
+                camera.x += 0.25 * Math.cos(headingRad);
+                camera.z += 0.25 * Math.sin(headingRad);
                 break;
             case 'K':
-                camera.x -= 0.25;
+                var headingRad = radians(camera.heading);
+                camera.x -= 0.25 * Math.cos(headingRad);
+                camera.z -= 0.25 * Math.sin(headingRad);
                 break;
             case 38: // Up arrow key
                 camera.y -= 0.25;
