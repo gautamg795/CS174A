@@ -39,7 +39,7 @@ var camera = {
     heading : 0.0,
     fovy : 45.0,
     aspect : undefined,
-    near : 2.0,
+    near : 1.0,
     far  : 100.0
 };
 
