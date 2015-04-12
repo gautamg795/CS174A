@@ -155,7 +155,7 @@ function render()
 {
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    theta[axis] += 2.0;
+    theta[axis] += 6.0; // 60 rpm?
     gl.uniform3fv(thetaLoc, theta);
     pMatrix = perspective(camera.fovy, camera.aspect, camera.near, camera.far);
     gl.uniformMatrix4fv( projection, false, flatten(pMatrix) );
