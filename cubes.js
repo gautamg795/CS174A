@@ -183,7 +183,7 @@ function generateCubes()
                    6, 7,
                    1, 5,
                    5, 6,
-                   4, 5 ];
+                   4, 5 ]; // The index order for triangle strips
     for ( var i = 0; i < indices.length; ++i ) {
         points.push( vertices[indices[i]] );
     }
