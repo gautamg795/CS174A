@@ -195,7 +195,7 @@ function render()
     gl.uniform3fv(thetaLoc, theta);
     pMatrix = perspective(camera.fovy, camera.aspect, camera.near, camera.far);
     gl.uniformMatrix4fv( projection, false, flatten(pMatrix) );
-    var translates = [
+    var models = [
         translate(10, 10, 10),
         translate(10, 10, -10),
         translate(10, -10, 10),
@@ -206,10 +206,10 @@ function render()
         translate(-10, -10, -10)
     ];
     var viewMatrix = mult(rotate(camera.heading, [0, 1, 0]), translate(camera.x, camera.y, camera.z));
-    for (var i = 0; i < translates.length; i++)
+    for (var i = 0; i < models.length; i++)
     {
-        translates[i] = mult(viewMatrix, translates[i]);
-        gl.uniformMatrix4fv(translateLoc, false, flatten(translates[i]))
+        models[i] = mult(viewMatrix, models[i]);
+        gl.uniformMatrix4fv(translateLoc, false, flatten(models[i]))
         gl.uniform4fv(vColorLoc, colors[(colorIndex + i) % colors.length]);
         gl.drawArrays( gl.TRIANGLE_STRIP, 0, 14 );
         gl.uniform4fv(vColorLoc, [1, 1, 1, 1]);
