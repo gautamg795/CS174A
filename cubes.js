@@ -5,7 +5,6 @@ var gl;
 var NumVertices  = 14;
 
 var points = [];
-var colors = [];
 
 var xAxis = 0;
 var yAxis = 1;
@@ -50,7 +49,7 @@ window.onload = function init()
     gl = WebGLUtils.setupWebGL( canvas );
     if ( !gl ) { alert( "WebGL isn't available" ); }
 
-    colorCube();
+    generateCubes();
 
     gl.viewport( 0, 0, canvas.width, canvas.height );
     camera.aspect =  canvas.width/canvas.height;
@@ -142,7 +141,7 @@ window.onload = function init()
 
 
 
-function colorCube()
+function generateCubes()
 {
     var vertices = [
         vec3( -0.5, -0.5,  0.5 ),
