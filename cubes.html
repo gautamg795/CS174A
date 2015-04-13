@@ -15,18 +15,21 @@ void main()
     float c = cos( angle );
     float s = sin( angle );
 
+    // Matrix for rotating the cubes
     mat4 rx = mat4( 1.0,  0.0,  0.0, 0.0,
 		    0.0,  c,  s, 0.0,
 		    0.0, -s,  c, 0.0,
 		    0.0,  0.0,  0.0, 1.0 );
 
-    // Use trig for scale so it cycles between 1.1x and .9x scale continuously
-    mat4 scale = mat4(1.0 + .1 * c, 0.0, 			  0.0, 			  0.0,
-					  0.0, 			  1.0 + .1 * c, 0.0, 			  0.0,
-					  0.0, 			  0.0, 			  1.0 + .1 * c, 0.0,
+    // Use sin(theta) for the scale factor so it cycles between 1.1x and .9x scale continuously
+    mat4 scale = mat4(1.0 + .1 * s, 0.0, 			  0.0, 			  0.0,
+					  0.0, 			  1.0 + .1 * s, 0.0, 			  0.0,
+					  0.0, 			  0.0, 			  1.0 + .1 * s, 0.0,
 					  0.0, 			  0.0, 			  0.0, 		   	  1.0);
 
+    // Transforms applied right to left
     gl_Position = modelViewProjection  * rx * scale * vPosition;
+    // Color passes through
     fColor = vColor;
 } 
 </script>
