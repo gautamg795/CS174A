@@ -25,10 +25,7 @@ var camera = {
     heading: 0.0,
     fovx: 73.0, // Approximately 45 degrees for fovy
     fovy: function () {
-        if (this.fovx === this.__fovx)
-            return this.__fovy; // Cache fovy value to avoid calculating atan/tan every render
-        else
-            return this.__fovx = this.fovx, this.__fovy = (2 * Math.atan(Math.tan(radians(this.fovx) / 2) * (1 / this.aspect))) * 180 / Math.PI;
+        return this.fovx/this.aspect;
     },
     aspect: undefined,
     near: 1.0,

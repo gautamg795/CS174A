@@ -24,7 +24,7 @@ Key presses move 1 degree or 0.25 units as appropriate. X-Z plane translation is
 
 5. >`n` and `w` keys make the horizontal field of view narrower and wider respectively. The aspect ratio does not change. `+` toggles an orthographic projection of crosshairs centered on the scene.
 
-	In order to make sure that `n` and `w` changed the *horizontal* field of view by one degree, I had to use the relation `fovy = (2 * Math.atan(Math.tan(radians(fovx) / 2) * (1 / aspect))) * 180 / Math.PI` as the `perspective()` function from MV.js only generates matrices based off the vertical field of view.
+	In order to make sure that `n` and `w` changed the *horizontal* field of view by one degree, I had to use the relation `fovy = (2 * Math.atan(Math.tan(radians(fovx) / 2) * (1 / aspect))) * 180 / Math.PI` as the `perspective()` function from MV.js only generates matrices based off the vertical field of view. However, I then realized that when using the `perspective()` function, this simplifies to simply `fovy = fovx / aspect`.
 
 	To generate the crosshairs, I used four vertices to make two perpendicular lines around the origin. I generated an orthographic projection matrix with MV.js and placed the crosshairs at Z=0. I drew the crosshairs after all the cubes and after temporarily disabling the depth buffer to ensure that the crosshairs stay on top of the cubes.
 
