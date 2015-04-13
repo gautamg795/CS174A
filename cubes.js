@@ -17,7 +17,7 @@ var thetaLoc, modelViewProjectionLoc, vColorLoc;
 
 
 var projectionLoc;
-
+var crosshairs = false;
 
 var colorIndex = 0;
 var colors = [
@@ -58,12 +58,12 @@ window.onload = function init()
     if ( !gl ) { alert( "WebGL isn't available" ); }
 
     generateCubes();
+    generateCrosshair();
 
     gl.viewport( 0, 0, canvas.width, canvas.height );
     camera.aspect =  canvas.width/canvas.height;
     gl.clearColor( 0.0, 0.0, 0.0, 1.0 );
     
-    gl.enable(gl.DEPTH_TEST);
 
     //
     //  Load shaders and initialize attribute buffers
@@ -138,7 +138,10 @@ window.onload = function init()
             case 37:
                 camera.heading -=1; // Left arrow key
                 break;
-
+            case 187:
+                if (event.shiftKey)
+                    crosshairs = !crosshairs;
+                break;
         }
     };
         
@@ -186,8 +189,20 @@ function generateCubes()
     }
 }
 
+function generateCrosshair()
+{
+    var vertices = [
+        vec3(0, 0.25, 0),
+        vec3(0, -0.25, 0),
+        vec3(-0.25, 0, 0),
+        vec3(0.25, 0, 0)
+        ];
+    vertices.forEach(function(element) { points.push(element); });
+}
+
 function render()
 {
+    gl.enable(gl.DEPTH_TEST);
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     theta += 6.0; // 60 rpm?
@@ -213,6 +228,14 @@ function render()
         gl.drawArrays( gl.TRIANGLE_STRIP, 0, 14 ); // Draw the cube with triangle strips based on first 14 points in array
         gl.uniform4fv(vColorLoc, [1, 1, 1, 1]); // Send white for the outlines
         gl.drawArrays( gl.LINES, 14, 24 ); // Draw the outlines which are stored in the last 24 points in array
+    }
+    if (crosshairs)
+    {
+        gl.disable(gl.DEPTH_TEST);
+        gl.uniform1f(thetaLoc, 0);
+        projectionMatrix = ortho(camera.aspect * -1, camera.aspect * 1, 1, -1, 0, 10);
+        gl.uniformMatrix4fv(modelViewProjectionLoc, false, flatten(projectionMatrix));
+        gl.drawArrays(gl.LINES, 38, 4);
     }
     requestAnimFrame( render );
 
