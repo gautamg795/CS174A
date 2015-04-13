@@ -86,48 +86,55 @@ window.onload = function init()
     modelViewProjectionLoc = gl.getUniformLocation(program, "modelViewProjection");
     projectionLoc = gl.getUniformLocation( program, "projection");
 
-    window.onkeydown = function(event) {
+    window.onkeypress = function(event) {
         // If the key pressed represents an alphanumeric character, convert it; else let the key code pass through
-        var key = event.keyCode > 48 && event.keyCode < 91 ? String.fromCharCode(event.keyCode) : event.keyCode;
-        console.log(key);
+        var key = String.fromCharCode(event.keyCode).toLowerCase();
         switch (key)
         {
-            case 'C':
+            case 'c':
                 colorIndex++;
                 break;
-            case 'R':
+            case 'r':
                 camera.x = 0.0;
                 camera.y = 0.0;
                 camera.z = -50.0;
                 camera.heading = 0;
                 camera.fovx = 73.0;
                 break;
-            case 'I':
+            case 'i':
                 var headingRad = radians(camera.heading);
                 camera.z += 0.25 * Math.cos(headingRad);
                 camera.x -= 0.25 * Math.sin(headingRad);
                 break;
-            case 'M':
+            case 'm':
                 var headingRad = radians(camera.heading);
                 camera.z -= 0.25 * Math.cos(headingRad);
                 camera.x += 0.25 * Math.sin(headingRad);
                 break;
-            case 'J':
+            case 'j':
                 var headingRad = radians(camera.heading);
                 camera.x += 0.25 * Math.cos(headingRad);
                 camera.z += 0.25 * Math.sin(headingRad);
                 break;
-            case 'K':
+            case 'k':
                 var headingRad = radians(camera.heading);
                 camera.x -= 0.25 * Math.cos(headingRad);
                 camera.z -= 0.25 * Math.sin(headingRad);
                 break;
-            case 'N':
+            case 'n':
                 camera.fovx--;
                 break;
-            case 'W':
+            case 'w':
                 camera.fovx++;
                 break;
+            case '+':
+                crosshairs = !crosshairs;
+                break;
+        }
+    };
+    window.onkeydown = function(event) {
+        switch(event.keyCode)
+        {
             case 38: // Up arrow key
                 camera.y -= 0.25;
                 break;
@@ -140,13 +147,8 @@ window.onload = function init()
             case 37:
                 camera.heading -=1; // Left arrow key
                 break;
-            case 187:
-                if (event.shiftKey)
-                    crosshairs = !crosshairs;
-                break;
         }
     };
-        
     render();
     
 }
