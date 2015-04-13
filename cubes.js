@@ -11,8 +11,8 @@ var yAxis = 1;
 var zAxis = 2;
 
 var axis = 0;
-var theta = [ 0, 0, 0 ];
- // Approximately 45 degrees for fovy
+var theta = 0;
+
 var thetaLoc, modelViewProjectionLoc, vColorLoc;
 
 
@@ -161,12 +161,6 @@ function generateCubes()
         vec3(  0.5, -0.5, -0.5 )
     ];
 
-    // We need to parition the quad into two triangles in order for
-    // WebGL to be able to render it.  In this case, we create two
-    // triangles from the quad indices
-    
-    //vertex color assigned by the index of the vertex
-    
     var indices = [0, 4, 7, 6, 3 ,2, 1, 6, 5, 4, 1, 0, 3, 7];
 
     for ( var i = 0; i < indices.length; ++i ) {
@@ -196,8 +190,8 @@ function render()
 {
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    theta[axis] += 6.0; // 60 rpm?
-    gl.uniform3fv(thetaLoc, theta);
+    theta += 6.0; // 60 rpm?
+    gl.uniform1f(thetaLoc, theta);
     var projectionMatrix = perspective(camera.fovy(), camera.aspect, camera.near, camera.far);
     var models = [
         translate(10, 10, 10),
@@ -214,7 +208,7 @@ function render()
     {
         models[i] = mult(viewMatrix, models[i]); // Create the model-view matrix
         models[i] = mult(projectionMatrix, models[i]); // Create the model-view-projection matrix
-        gl.uniformMatrix4fv(modelViewProjectionLoc, false, flatten(models[i])) // Send the model-view matrix
+        gl.uniformMatrix4fv(modelViewProjectionLoc, false, flatten(models[i])) // Send the model-view-projection matrix
         gl.uniform4fv(vColorLoc, colors[(colorIndex + i) % colors.length]); // Give each cube a unique color, send to shader
         gl.drawArrays( gl.TRIANGLE_STRIP, 0, 14 ); // Draw the cube with triangle strips based on first 14 points in array
         gl.uniform4fv(vColorLoc, [1, 1, 1, 1]); // Send white for the outlines
