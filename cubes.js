@@ -45,7 +45,7 @@ var camera = {
         },
     aspect : undefined,
     near : 1.0,
-    far  : 100.0,
+    far  : 300.0,
     __fovx : this.fovx,
     __fovy : undefined
 };
@@ -87,7 +87,9 @@ window.onload = function init()
     projectionLoc = gl.getUniformLocation( program, "projection");
 
     window.onkeydown = function(event) {
-        var key = event.keyCode > 48 ? String.fromCharCode(event.keyCode) : event.keyCode;
+        // If the key pressed represents an alphanumeric character, convert it; else let the key code pass through
+        var key = event.keyCode > 48 && event.keyCode < 91 ? String.fromCharCode(event.keyCode) : event.keyCode;
+        console.log(key);
         switch (key)
         {
             case 'C':
