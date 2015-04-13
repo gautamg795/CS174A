@@ -194,10 +194,10 @@ function generateCubes()
 function generateCrosshair()
 {
     var vertices = [
-        vec3(0, 0.25, 0),
-        vec3(0, -0.25, 0),
-        vec3(-0.25, 0, 0),
-        vec3(0.25, 0, 0)
+        vec3(0, 1, 0),
+        vec3(0, -1, 0),
+        vec3(-1, 0, 0),
+        vec3(1, 0, 0)
         ];
     vertices.forEach(function(element) { points.push(element); });
 }
@@ -235,7 +235,7 @@ function render()
     {
         gl.disable(gl.DEPTH_TEST);
         gl.uniform1f(thetaLoc, 0);
-        projectionMatrix = ortho(camera.aspect * -1, camera.aspect * 1, 1, -1, 0, 10);
+        projectionMatrix = ortho(camera.aspect * -3, camera.aspect * 3, 3, -3, 0, 1);
         gl.uniformMatrix4fv(modelViewProjectionLoc, false, flatten(projectionMatrix));
         gl.drawArrays(gl.LINES, 38, 4);
     }
