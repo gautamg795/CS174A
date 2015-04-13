@@ -29,9 +29,7 @@ var camera = {
     },
     aspect: undefined,
     near: 1.0,
-    far: 300.0,
-    __fovx: this.fovx,
-    __fovy: undefined
+    far: 300.0
 };
 
 window.onload = function init() {
