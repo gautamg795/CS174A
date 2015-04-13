@@ -23,7 +23,7 @@ var camera = {
     y: 0.0,
     z: -50.0,
     heading: 0.0,
-    fovx: 73.0, // Approximately 45 degrees for fovy
+    fovx: 80.0, // 45 degrees for fovy
     fovy: function () {
         return this.fovx/this.aspect;
     },
@@ -85,7 +85,7 @@ window.onload = function init() {
             camera.y = 0.0;
             camera.z = -50.0;
             camera.heading = 0;
-            camera.fovx = 73.0;
+            camera.fovx = 80.0;
             break;
         case 'i':
             var headingRad = radians(camera.heading);
