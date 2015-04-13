@@ -13,7 +13,7 @@ var zAxis = 2;
 var axis = 0;
 var theta = [ 0, 0, 0 ];
  // Approximately 45 degrees for fovy
-var thetaLoc, modelViewLoc, vColorLoc;
+var thetaLoc, modelViewProjectionLoc, vColorLoc;
 
 
 var projectionLoc;
@@ -83,7 +83,7 @@ window.onload = function init()
     gl.enableVertexAttribArray( vPosition );
 
     thetaLoc = gl.getUniformLocation(program, "theta");
-    modelViewLoc = gl.getUniformLocation(program, "modelView");
+    modelViewProjectionLoc = gl.getUniformLocation(program, "modelViewProjection");
     projectionLoc = gl.getUniformLocation( program, "projection");
 
     window.onkeydown = function(event) {
@@ -199,7 +199,6 @@ function render()
     theta[axis] += 6.0; // 60 rpm?
     gl.uniform3fv(thetaLoc, theta);
     var projectionMatrix = perspective(camera.fovy(), camera.aspect, camera.near, camera.far);
-    gl.uniformMatrix4fv( projectionLoc, false, flatten(projectionMatrix) );
     var models = [
         translate(10, 10, 10),
         translate(10, 10, -10),
@@ -214,7 +213,8 @@ function render()
     for (var i = 0; i < models.length; i++)
     {
         models[i] = mult(viewMatrix, models[i]); // Create the model-view matrix
-        gl.uniformMatrix4fv(modelViewLoc, false, flatten(models[i])) // Send the model-view matrix
+        models[i] = mult(projectionMatrix, models[i]); // Create the model-view-projection matrix
+        gl.uniformMatrix4fv(modelViewProjectionLoc, false, flatten(models[i])) // Send the model-view matrix
         gl.uniform4fv(vColorLoc, colors[(colorIndex + i) % colors.length]); // Give each cube a unique color, send to shader
         gl.drawArrays( gl.TRIANGLE_STRIP, 0, 14 ); // Draw the cube with triangle strips based on first 14 points in array
         gl.uniform4fv(vColorLoc, [1, 1, 1, 1]); // Send white for the outlines
