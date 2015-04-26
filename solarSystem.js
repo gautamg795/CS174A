@@ -92,11 +92,13 @@ window.onload = function init() {
     if (!gl) {
         alert("WebGL isn't available");
     }
-    planets.push(new Planet(0, 5, 6, [1, 1, 0, 1]));
-    planets.push(new Planet(5, 6, 6, [1, 0, 0, 1]));
-    planets.push(new Planet(2, 4, 6, [1, 0, 1, 1]));
-    planets.push(new Planet(9, 3, 6, [1, .5, .5, 1]));
-    planets.push(new Planet(12, 3, 6, [.1, .5, 1, 1]));
+    planets.push(new Planet(0, 1.8, 6, [1, 1, 0, 1]));
+    planets.push(new Planet(4, 1, 6, [1, 0, 1, 1]));
+    planets.push(new Planet(7, 1.2, 6, [1, 0, 0, 1]));
+    planets.push(new Planet(10, 1.4, 6, [1, .5, .5, 1]));
+    planets.push(new Planet(14, 1, 6, [.1, .5, 1, 1]));
+    planets.push(new Planet(14, .5, 6, [.6, .5, .9, 1]));
+    planets[planets.length - 1].isMoon = true;
     gl.viewport(0, 0, canvas.width, canvas.height); // Set viewport settings
     camera.aspect = canvas.width / canvas.height; // Set aspect ratio
     gl.clearColor(0.0, 0.0, 0.0, 1.0); // Initialize canvas to black
@@ -199,8 +201,26 @@ function render() {
     // Generate the view matrix based off of the translation and rotation of the camera)
     var viewMatrix = mult(rotate(30, [1, 0, 0]), mult(rotate(camera.heading, [0,1,0]),translate(camera.x, camera.y, camera.z)));
     planets.forEach(function(planet, i) {
-        var modelViewMatrix = mult(viewMatrix, mult(rotate(i * planet.theta, [0,1,0]), translate(planet.x, planet.y, planet.z)));
-        if (i) planet.theta += 1 / planet.z * 5;
+        var modelViewMatrix;
+        if (planet.isMoon)
+        {
+            var basePlanet = planets[i-1];
+            modelViewMatrix = mult(translate(0, 0, 3), scale(planet.size, planet.size, planet.size));
+            modelViewMatrix = mult(rotate(planet.theta, [0, 1, 0]), modelViewMatrix);
+            modelViewMatrix = mult(translate(basePlanet.x, basePlanet.y, basePlanet.z), modelViewMatrix);
+            modelViewMatrix = mult(rotate((i - 1) * basePlanet.theta, [0, 1, 0]), modelViewMatrix);
+            modelViewMatrix = mult(viewMatrix, modelViewMatrix);
+        }
+        else {
+            modelViewMatrix = mult(translate(planet.x, planet.y, planet.z), scale(planet.size, planet.size, planet.size));
+            modelViewMatrix = mult(rotate(i * planet.theta, [0, 1, 0]), modelViewMatrix);
+            modelViewMatrix = mult(viewMatrix, modelViewMatrix);
+        }
+        if (i > 0) {
+            planet.theta += 1 / planet.z * 5;
+            if (planet.isMoon)
+                planet.theta += .5;
+        }
         modelViewMatrix = mult(projectionMatrix, modelViewMatrix);
         gl.uniformMatrix4fv(modelViewProjectionLoc, false, flatten(modelViewMatrix));
         gl.uniform4fv(vColorLoc, planet.color);
