@@ -3,15 +3,26 @@ var normalsArray = [];
 var index = 0;
 var planets = [];
 
+var pointsCache = new Object();
+
 function Planet(orbitalRadius, size, complexity, color) {
     this.x = 0;
     this.y = 0;
     this.z = orbitalRadius;
-    this.theta = Math.floor(Math.random()*1000) % 360;
-    this.startIndex = pointsArray.length;
-    sphere(complexity);
-    this.numPoints = pointsArray.length - this.startIndex;
+    this.theta = Math.floor(Math.random() * 1000) % 360;
+    this.size = size;
     this.color = color;
+    // If we've already computed the points for a sphere with this complexity, just reuse them
+    if (pointsCache[String(complexity)]) {
+        this.startIndex = pointsCache[String(complexity)][0];
+        this.numPoints = pointsCache[String(complexity)][1];
+    } else {
+        this.startIndex = pointsArray.length;
+        sphere(complexity);
+        this.numPoints = pointsArray.length - this.startIndex;
+        pointsCache[String(complexity)] = [this.startIndex, this.numPoints];
+    }
+
 }
 
 function sphere(nSub) {
