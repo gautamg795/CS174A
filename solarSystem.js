@@ -27,49 +27,49 @@ function Planet(orbitalRadius, size, complexity, color) {
 
 function sphere(nSub) {
     function triangle(a, b, c) {
-         pointsArray.push(a);
-         pointsArray.push(b);      
-         pointsArray.push(c);
-        
-         // normals are vectors
-         
-         normalsArray.push(a[0],a[1], a[2], 0.0);
-         normalsArray.push(b[0],b[1], b[2], 0.0);
-         normalsArray.push(c[0],c[1], c[2], 0.0);
+        pointsArray.push(a);
+        pointsArray.push(b);
+        pointsArray.push(c);
 
-         index += 3;    
+        // normals are vectors
+
+        normalsArray.push(a[0], a[1], a[2], 0.0);
+        normalsArray.push(b[0], b[1], b[2], 0.0);
+        normalsArray.push(c[0], c[1], c[2], 0.0);
+
+        index += 3;
     }
 
     function divideTriangle(a, b, c, count) {
-        if ( count > 0 ) {
-                    
-            var ab = mix( a, b, 0.5);
-            var ac = mix( a, c, 0.5);
-            var bc = mix( b, c, 0.5);
-                    
+        if (count > 0) {
+
+            var ab = mix(a, b, 0.5);
+            var ac = mix(a, c, 0.5);
+            var bc = mix(b, c, 0.5);
+
             ab = normalize(ab, true);
             ac = normalize(ac, true);
             bc = normalize(bc, true);
-                                    
-            divideTriangle( a, ab, ac, count - 1 );
-            divideTriangle( ab, b, bc, count - 1 );
-            divideTriangle( bc, c, ac, count - 1 );
-            divideTriangle( ab, bc, ac, count - 1 );
-        }
-        else { 
-            triangle( a, b, c );
+
+            divideTriangle(a, ab, ac, count - 1);
+            divideTriangle(ab, b, bc, count - 1);
+            divideTriangle(bc, c, ac, count - 1);
+            divideTriangle(ab, bc, ac, count - 1);
+        } else {
+            triangle(a, b, c);
         }
     }
+
     function tetrahedron(a, b, c, d, n) {
         divideTriangle(a, b, c, n);
         divideTriangle(d, c, b, n);
         divideTriangle(a, d, b, n);
         divideTriangle(a, c, d, n);
     }
-    var va = vec4(0.0, 0.0, -1.0,1);
+    var va = vec4(0.0, 0.0, -1.0, 1);
     var vb = vec4(0.0, 0.942809, 0.333333, 1);
     var vc = vec4(-0.816497, -0.471405, 0.333333, 1);
-    var vd = vec4(0.816497, -0.471405, 0.333333,1);
+    var vd = vec4(0.816497, -0.471405, 0.333333, 1);
     tetrahedron(va, vb, vc, vd, nSub);
 }
 
@@ -126,63 +126,63 @@ window.onload = function init() {
     modelViewProjectionLoc = gl.getUniformLocation(program, "modelViewProjection");
 
     // Use onkeypress for all non-arrow key events
-    window.onkeypress = function (event) {
+    window.onkeypress = function(event) {
         var key = String.fromCharCode(event.keyCode)
             .toLowerCase();
         switch (key) {
-        case 'c':
-            colorIndex++;
-            break;
-        case 'r':
-            camera.x = 0.0;
-            camera.y = -10.0;
-            camera.z = -25.0;
-            camera.heading = 0;
-            camera.fovy = 50.0;
-            break;
-        case 'i':
-            var headingRad = radians(camera.heading);
-            camera.z += 0.25 * Math.cos(headingRad);
-            camera.x -= 0.25 * Math.sin(headingRad);
-            break;
-        case 'm':
-            var headingRad = radians(camera.heading);
-            camera.z -= 0.25 * Math.cos(headingRad);
-            camera.x += 0.25 * Math.sin(headingRad);
-            break;
-        case 'j':
-            var headingRad = radians(camera.heading);
-            camera.x += 0.25 * Math.cos(headingRad);
-            camera.z += 0.25 * Math.sin(headingRad);
-            break;
-        case 'k':
-            var headingRad = radians(camera.heading);
-            camera.x -= 0.25 * Math.cos(headingRad);
-            camera.z -= 0.25 * Math.sin(headingRad);
-            break;
-        case 'n':
-            camera.fovy--;
-            break;
-        case 'w':
-            camera.fovy++;
-            break;
+            case 'c':
+                colorIndex++;
+                break;
+            case 'r':
+                camera.x = 0.0;
+                camera.y = -10.0;
+                camera.z = -25.0;
+                camera.heading = 0;
+                camera.fovy = 50.0;
+                break;
+            case 'i':
+                var headingRad = radians(camera.heading);
+                camera.z += 0.25 * Math.cos(headingRad);
+                camera.x -= 0.25 * Math.sin(headingRad);
+                break;
+            case 'm':
+                var headingRad = radians(camera.heading);
+                camera.z -= 0.25 * Math.cos(headingRad);
+                camera.x += 0.25 * Math.sin(headingRad);
+                break;
+            case 'j':
+                var headingRad = radians(camera.heading);
+                camera.x += 0.25 * Math.cos(headingRad);
+                camera.z += 0.25 * Math.sin(headingRad);
+                break;
+            case 'k':
+                var headingRad = radians(camera.heading);
+                camera.x -= 0.25 * Math.cos(headingRad);
+                camera.z -= 0.25 * Math.sin(headingRad);
+                break;
+            case 'n':
+                camera.fovy--;
+                break;
+            case 'w':
+                camera.fovy++;
+                break;
         }
     };
     // Use onkeydown for arrow keys
-    window.onkeydown = function (event) {
+    window.onkeydown = function(event) {
         switch (event.keyCode) {
-        case 38: // Up arrow key
-            camera.y -= 0.25;
-            break;
-        case 40: //Down arrow key
-            camera.y += 0.25;
-            break;
-        case 39:
-            camera.heading += 1; // Right arrow key
-            break;
-        case 37:
-            camera.heading -= 1; // Left arrow key
-            break;
+            case 38: // Up arrow key
+                camera.y -= 0.25;
+                break;
+            case 40: //Down arrow key
+                camera.y += 0.25;
+                break;
+            case 39:
+                camera.heading += 1; // Right arrow key
+                break;
+            case 37:
+                camera.heading -= 1; // Left arrow key
+                break;
         }
     };
 
@@ -196,42 +196,35 @@ function render() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     var projectionMatrix = perspective(camera.fovy, camera.aspect, camera.near, camera.far); // Generate proj matrix
-    
-    
+
+
     // Generate the view matrix based off of the translation and rotation of the camera)
-    var viewMatrix = mult(rotate(30, [1, 0, 0]), mult(rotate(camera.heading, [0,1,0]),translate(camera.x, camera.y, camera.z)));
+    var viewMatrix = mult(rotate(30, [1, 0, 0]), mult(rotate(camera.heading, [0, 1, 0]), translate(camera.x, camera.y, camera.z)));
     planets.forEach(function(planet, i) {
         var modelViewMatrix;
-        if (planet.isMoon)
-        {
-            var basePlanet = planets[i-1];
-            modelViewMatrix = mult(translate(0, 0, 3), scale(planet.size, planet.size, planet.size));
+        if (planet.isMoon) {
+            var basePlanet = planets[i - 1];
+            modelViewMatrix = mult(translate(0, 0, 2), scale(planet.size, planet.size, planet.size));
             modelViewMatrix = mult(rotate(planet.theta, [0, 1, 0]), modelViewMatrix);
             modelViewMatrix = mult(translate(basePlanet.x, basePlanet.y, basePlanet.z), modelViewMatrix);
-            modelViewMatrix = mult(rotate((i - 1) * basePlanet.theta, [0, 1, 0]), modelViewMatrix);
+            modelViewMatrix = mult(rotate(basePlanet.theta, [0, 1, 0]), modelViewMatrix);
             modelViewMatrix = mult(viewMatrix, modelViewMatrix);
-        }
-        else {
+        } else {
             modelViewMatrix = mult(translate(planet.x, planet.y, planet.z), scale(planet.size, planet.size, planet.size));
-            modelViewMatrix = mult(rotate(i * planet.theta, [0, 1, 0]), modelViewMatrix);
+            modelViewMatrix = mult(rotate((i != 0) * planet.theta, [0, 1, 0]), modelViewMatrix);
             modelViewMatrix = mult(viewMatrix, modelViewMatrix);
         }
         if (i > 0) {
-            planet.theta += 1 / planet.z * 5;
+            planet.theta += 2 / planet.z * 4;
             if (planet.isMoon)
-                planet.theta += .5;
+                planet.theta += 1;
+            if (planet.theta > 360)
+                planet.theta %= 360;
         }
         modelViewMatrix = mult(projectionMatrix, modelViewMatrix);
         gl.uniformMatrix4fv(modelViewProjectionLoc, false, flatten(modelViewMatrix));
         gl.uniform4fv(vColorLoc, planet.color);
         gl.drawArrays(gl.TRIANGLES, planet.startIndex, planet.numPoints);
     })
-    // for (var i = 0; i < models.length; i++) {
-    //     models[i] = mult(viewMatrix, models[i]); // Create the model-view matrix
-    //     models[i] = mult(projectionMatrix, models[i]); // Create the model-view-projection matrix
-    //     gl.uniformMatrix4fv(modelViewProjectionLoc, false, flatten(models[i])) // Send the model-view-projection matrix
-    //     gl.uniform4fv(vColorLoc, [1, i, 0, 1]); // Give each cube a unique color, send to shader
-    //     gl.drawArrays(gl.TRIANGLES, 0, index); // Draw the cube with triangle strips based on first 14 points in array
-    // }
     requestAnimFrame(render);
 }
