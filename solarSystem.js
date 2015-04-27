@@ -5,41 +5,65 @@ var planets = [];
 
 var pointsCache = new Object();
 
-function Planet(orbitalRadius, size, complexity, color) {
+var sunLight = {
+    ambient : vec4(0.8, 0.8, 0.8, 1.0),
+    diffuse : vec4(1.0, 0.8, 0.0, 1.0),
+    specular : vec4(1.0, 0.8, 0.0, 1.0),
+}
+
+function Planet(orbitalRadius, size, complexity, shading, material) {
     this.x = 0;
     this.y = 0;
     this.z = orbitalRadius;
     this.theta = Math.floor(Math.random() * 1000) % 360;
     this.size = size;
-    this.color = color;
+    this.material = material;
+    this.shading = shading;
     // If we've already computed the points for a sphere with this complexity, just reuse them
-    if (pointsCache[String(complexity)]) {
-        this.startIndex = pointsCache[String(complexity)][0];
-        this.numPoints = pointsCache[String(complexity)][1];
+    if (pointsCache[String(complexity) + "." + String(shading)]) {
+        this.startIndex = pointsCache[String(complexity) + "." + String(shading)][0];
+        this.numPoints = pointsCache[String(complexity) + "." + String(shading)][1];
     } else {
         this.startIndex = pointsArray.length;
-        sphere(complexity);
-        this.numPoints = pointsArray.length - this.startIndex;
-        pointsCache[String(complexity)] = [this.startIndex, this.numPoints];
+        sphere(complexity, shading);
+        this.numPoints = pointsArray.length - this.startIndex;  
+        pointsCache[String(complexity) + "." + String(shading)] = [this.startIndex, this.numPoints];
     }
+        
 
 }
 
-function sphere(nSub) {
+function sphere(nSub, normals) {
     function triangle(a, b, c) {
-        pointsArray.push(a);
-        pointsArray.push(b);
-        pointsArray.push(c);
+        if (normals == 0) {
+            var t1 = subtract(b, a);
+            var t2 = subtract(c, a);
+            var normal = normalize(cross(t2, t1));
+            normal = vec4(normal);
+            normal[3] = 0.0;
+            normalsArray.push(normal);
+            normalsArray.push(normal);
+            normalsArray.push(normal);
 
-        // normals are vectors
+            pointsArray.push(a);
+            pointsArray.push(b);
+            pointsArray.push(c);
 
-        normalsArray.push(a[0], a[1], a[2], 0.0);
-        normalsArray.push(b[0], b[1], b[2], 0.0);
-        normalsArray.push(c[0], c[1], c[2], 0.0);
+            index += 3;
+        } else {
+            pointsArray.push(a);
+            pointsArray.push(b);
+            pointsArray.push(c);
 
-        index += 3;
+            // normals are vectors
+
+            normalsArray.push([a[0], a[1], a[2], 0.0]);
+            normalsArray.push([b[0], b[1], b[2], 0.0]);
+            normalsArray.push([c[0], c[1], c[2], 0.0]);
+
+            index += 3;
+        }
     }
-
     function divideTriangle(a, b, c, count) {
         if (count > 0) {
 
@@ -75,7 +99,7 @@ function sphere(nSub) {
 
 var camera = {
     x: 0.0,
-    y: -10.0,
+    y: -12.0,
     z: -25.0,
     heading: 0.0,
     fovy: 50,
@@ -92,12 +116,42 @@ window.onload = function init() {
     if (!gl) {
         alert("WebGL isn't available");
     }
-    planets.push(new Planet(0, 1.8, 6, [1, 1, 0, 1]));
-    planets.push(new Planet(4, 1, 6, [1, 0, 1, 1]));
-    planets.push(new Planet(7, 1.2, 6, [1, 0, 0, 1]));
-    planets.push(new Planet(10, 1.4, 6, [1, .5, .5, 1]));
-    planets.push(new Planet(14, 1, 6, [.1, .5, 1, 1]));
-    planets.push(new Planet(14, .5, 6, [.6, .5, .9, 1]));
+    planets.push(new Planet(0, 2.0, 5, 0, {
+        ambient : [1.3, 1.2, 0.0, 1.0],
+        diffuse : [1.0, 1.7, 0.0, 1.0],
+        specular: [1.0, 1.0, 1.0, 1.0],
+        shininess : 0.0
+    }));
+    planets.push(new Planet(4, 1, 3, 0, {
+        ambient : [0.6, 0.6, 1.0, 1.0],
+        diffuse : [0.8, 0.8, 1.0, 1.0],
+        specular: [1.0, 1.0, 1.0, 0.0],
+        shininess : 20.0
+    }));
+    planets.push(new Planet(7, 1.2, 3, 1, {
+        ambient : [0.1, 0.3, 0.1, 1.0],
+        diffuse : [0.1, 0.5, 0.0, 1.0],
+        specular: [1.0, 1.0, 1.0, 1.0],
+        shininess : 30.0
+    }));
+    planets.push(new Planet(10, 1.4, 7, 2, {
+        ambient : [0.0, 0.2, 1.0, 1.0],
+        diffuse : [0.3, 0.3, 1.0, 1.0],
+        specular: [1.0, 1.0, 1.0, 1.0],
+        shininess : 100.0
+    }));
+    planets.push(new Planet(14, 1, 3, 0, {
+        ambient : [0.5, 0.0, 0.0, 1.0],
+        diffuse : [1.0, 0.0, 0.0, 1.0],
+        specular: [1.0, 1.0, 1.0, 1.0],
+        shininess : 100.0
+    }));
+    planets.push(new Planet(14, .5, 3, 0, {
+        ambient : [0.3, 0.25, 0.45, 1.0],
+        diffuse : [0.6, 0.5, 0.9, 1.0],
+        specular: [1.0, 1.0, 1.0, 1.0],
+        shininess : 100.0
+        }));
     planets[planets.length - 1].isMoon = true;
     gl.viewport(0, 0, canvas.width, canvas.height); // Set viewport settings
     camera.aspect = canvas.width / canvas.height; // Set aspect ratio
@@ -109,7 +163,21 @@ window.onload = function init() {
     gl.useProgram(program);
 
     // Find where we store the color info
-    vColorLoc = gl.getUniformLocation(program, "vColor");
+    ambientProductLoc = gl.getUniformLocation(program, "ambientProduct");
+    diffuseProductLoc = gl.getUniformLocation(program, "diffuseProduct");
+    specularProductLoc = gl.getUniformLocation(program, "specularProduct");
+    shininessLoc = gl.getUniformLocation(program, "shininess");
+    lightLoc = gl.getUniformLocation(program, "lightPosition")
+    isSunLoc = gl.getUniformLocation(program, "isSun");
+    shadingLoc = gl.getUniformLocation(program, "vShading");
+
+    var nBuffer = gl.createBuffer();
+    gl.bindBuffer( gl.ARRAY_BUFFER, nBuffer);
+    gl.bufferData( gl.ARRAY_BUFFER, flatten(normalsArray), gl.DYNAMIC_DRAW);
+    
+    var vNormal = gl.getAttribLocation( program, "vNormal" );
+    gl.vertexAttribPointer(vNormal, 4, gl.FLOAT, false, 0, 0 );
+    gl.enableVertexAttribArray( vNormal);
 
     // Load the points into the GPU
     var vBuffer = gl.createBuffer();
@@ -123,8 +191,8 @@ window.onload = function init() {
 
 
     // Find where we store the model-view-projection matrix
-    modelViewProjectionLoc = gl.getUniformLocation(program, "modelViewProjection");
-
+    modelViewLoc = gl.getUniformLocation(program, "modelView");
+    projectionLoc = gl.getUniformLocation(program, "projection");
     // Use onkeypress for all non-arrow key events
     window.onkeypress = function(event) {
         var key = String.fromCharCode(event.keyCode)
@@ -213,6 +281,13 @@ function render() {
             modelViewMatrix = mult(translate(planet.x, planet.y, planet.z), scale(planet.size, planet.size, planet.size));
             modelViewMatrix = mult(rotate((i != 0) * planet.theta, [0, 1, 0]), modelViewMatrix);
             modelViewMatrix = mult(viewMatrix, modelViewMatrix);
+            if ( i == 0 ) {
+                gl.uniformMatrix4fv(lightLoc, false, flatten(modelViewMatrix));
+                gl.uniform1f(isSunLoc, true);
+            }
+            else
+                gl.uniform1f(isSunLoc, false);
+
         }
         if (i > 0) {
             planet.theta += 2 / planet.z * 4;
@@ -221,9 +296,13 @@ function render() {
             if (planet.theta > 360)
                 planet.theta %= 360;
         }
-        modelViewMatrix = mult(projectionMatrix, modelViewMatrix);
-        gl.uniformMatrix4fv(modelViewProjectionLoc, false, flatten(modelViewMatrix));
-        gl.uniform4fv(vColorLoc, planet.color);
+        gl.uniformMatrix4fv(projectionLoc, false, flatten(projectionMatrix));
+        gl.uniformMatrix4fv(modelViewLoc, false, flatten(modelViewMatrix));
+        gl.uniform4fv(ambientProductLoc, mult(sunLight.ambient, planet.material.ambient));
+        gl.uniform4fv(diffuseProductLoc, mult(sunLight.diffuse, planet.material.diffuse));
+        gl.uniform4fv(specularProductLoc, mult(sunLight.specular, planet.material.specular));
+        gl.uniform1f(shininessLoc, planet.material.shininess);
+        gl.uniform1f(shadingLoc, planet.shading);
         gl.drawArrays(gl.TRIANGLES, planet.startIndex, planet.numPoints);
     })
     requestAnimFrame(render);
