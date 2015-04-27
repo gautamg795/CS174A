@@ -140,13 +140,13 @@ window.onload = function init() {
         specular: [1.0, 1.0, 1.0, 1.0],
         shininess : 100.0
     }));
-    planets.push(new Planet(14, 1, 3, 0, {
-        ambient : [0.5, 0.0, 0.0, 1.0],
-        diffuse : [1.0, 0.0, 0.0, 1.0],
-        specular: [1.0, 1.0, 1.0, 1.0],
-        shininess : 100.0
+    planets.push(new Planet(14, 1, 5, 2, {
+        ambient : [0.4, 0.2, 0.1, 1.0],
+        diffuse : [0.4, 0.2, 0.1, 1.0],
+        specular: [0.0, 0.0, 0.0, 0.0],
+        shininess : 0.0
     }));
-    planets.push(new Planet(14, .5, 3, 0, {
+    planets.push(new Planet(14, .5, 4, 2, {
         ambient : [0.3, 0.25, 0.45, 1.0],
         diffuse : [0.6, 0.5, 0.9, 1.0],
         specular: [1.0, 1.0, 1.0, 1.0],
