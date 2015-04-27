@@ -283,10 +283,7 @@ function render() {
             modelViewMatrix = mult(viewMatrix, modelViewMatrix);
             if ( i == 0 ) {
                 gl.uniformMatrix4fv(lightLoc, false, flatten(modelViewMatrix));
-                gl.uniform1f(isSunLoc, true);
             }
-            else
-                gl.uniform1f(isSunLoc, false);
 
         }
         if (i > 0) {
@@ -302,7 +299,8 @@ function render() {
         gl.uniform4fv(diffuseProductLoc, mult(sunLight.diffuse, planet.material.diffuse));
         gl.uniform4fv(specularProductLoc, mult(sunLight.specular, planet.material.specular));
         gl.uniform1f(shininessLoc, planet.material.shininess);
-        gl.uniform1f(shadingLoc, planet.shading);
+        gl.uniform1i(shadingLoc, planet.shading);
+        gl.uniform1i(isSunLoc, i == 0)
         gl.drawArrays(gl.TRIANGLES, planet.startIndex, planet.numPoints);
     })
     requestAnimFrame(render);
