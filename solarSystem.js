@@ -2,7 +2,7 @@ var pointsArray = [];
 var normalsArray = [];
 var index = 0;
 var planets = [];
-
+var bindPlanet = false;
 var pointsCache = new Object();
 
 var sunLight = {
@@ -31,6 +31,19 @@ function Planet(orbitalRadius, size, complexity, shading, material) {
     }
         
 
+}
+
+function multMatVec( u, v )
+{
+    var result = [];
+        
+        for ( var i = 0; i < u.length; ++i ) {
+            var sum = 0;
+            for (var j = 0; j < u.length; j++)
+                sum += u[i][j] * v[j]
+            result.push( sum );
+        }
+        return result;
 }
 
 function sphere(nSub, normals) {
@@ -205,9 +218,9 @@ window.onload = function init() {
         var key = String.fromCharCode(event.keyCode)
             .toLowerCase();
         switch (key) {
-            case 'c':
-                colorIndex++;
-                break;
+            case 'a':
+                bindPlanet = !bindPlanet;
+                /* fall through */
             case 'r':
                 camera.x = 0.0;
                 camera.y = -10.0;
@@ -264,7 +277,6 @@ window.onload = function init() {
     render();
 }
 
-
 function render() {
 
     // clear the buffers
@@ -272,9 +284,24 @@ function render() {
 
     var projectionMatrix = perspective(camera.fovy, camera.aspect, camera.near, camera.far); // Generate proj matrix
 
-
     // Generate the view matrix based off of the translation and rotation of the camera)
-    var viewMatrix = mult(rotate(30, [1, 0, 0]), mult(rotate(camera.heading, [0, 1, 0]), translate(camera.x, camera.y, camera.z)));
+    var viewMatrix;
+    if (bindPlanet) {
+        var boundPlanet = planets[planets.length - 2];
+        var rot = rotate(boundPlanet.theta, [0, 1, 0]);
+        var pos = vec4(boundPlanet.x, boundPlanet.y, boundPlanet.z - 1, 1);
+        var eye = multMatVec(rot, pos);
+        eye = eye.slice(0, 3);
+        rot = rotate(camera.heading, [0, -1, 0]);
+        var at = subtract([0, 0, 0], eye);
+        at = at.concat(1);
+        at = multMatVec(rot, at);
+        at = at.slice(0, 3);
+        at = add(at, eye);
+        viewMatrix = lookAt(eye, at, [0, 1, 0]);
+    } else {
+        viewMatrix = mult(rotate(30, [1, 0, 0]), mult(rotate(camera.heading, [0, 1, 0]), translate(camera.x, camera.y, camera.z)));
+    }
     planets.forEach(function(planet, i) {
         var modelViewMatrix;
         if (planet.isMoon) {
