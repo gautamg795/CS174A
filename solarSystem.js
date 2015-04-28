@@ -116,42 +116,49 @@ window.onload = function init() {
     if (!gl) {
         alert("WebGL isn't available");
     }
+    // Sun
     planets.push(new Planet(0, 2.0, 5, 0, {
         ambient : [1.3, 1.2, 0.0, 1.0],
         diffuse : [1.0, 1.7, 0.0, 1.0],
         specular: [1.0, 1.0, 1.0, 1.0],
         shininess : 0.0
     }));
+    // Icy planet
     planets.push(new Planet(4, 1, 3, 0, {
         ambient : [0.6, 0.6, 1.0, 1.0],
         diffuse : [0.8, 0.8, 1.0, 1.0],
         specular: [1.0, 1.0, 1.0, 0.0],
         shininess : 20.0
     }));
+    // Swampy planet
     planets.push(new Planet(7, 1.2, 3, 1, {
         ambient : [0.1, 0.3, 0.1, 1.0],
         diffuse : [0.1, 0.5, 0.0, 1.0],
         specular: [1.0, 1.0, 1.0, 1.0],
         shininess : 30.0
     }));
+    // Water planet
     planets.push(new Planet(10, 1.4, 7, 2, {
         ambient : [0.0, 0.2, 1.0, 1.0],
         diffuse : [0.3, 0.3, 1.0, 1.0],
         specular: [1.0, 1.0, 1.0, 1.0],
         shininess : 100.0
     }));
-    planets.push(new Planet(14, 1, 5, 2, {
+    // Muddy planet
+    planets.push(new Planet(14, 1, 5, 1, {
         ambient : [0.4, 0.2, 0.1, 1.0],
         diffuse : [0.4, 0.2, 0.1, 1.0],
         specular: [0.0, 0.0, 0.0, 0.0],
         shininess : 0.0
     }));
-    planets.push(new Planet(14, .5, 4, 2, {
+    // Moon
+    planets.push(new Planet(14, .5, 4, 1, {
         ambient : [0.3, 0.25, 0.45, 1.0],
         diffuse : [0.6, 0.5, 0.9, 1.0],
         specular: [1.0, 1.0, 1.0, 1.0],
         shininess : 100.0
         }));
+
     planets[planets.length - 1].isMoon = true;
     gl.viewport(0, 0, canvas.width, canvas.height); // Set viewport settings
     camera.aspect = canvas.width / canvas.height; // Set aspect ratio
