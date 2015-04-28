@@ -76,9 +76,9 @@
 			void
 			main()
 			{
-				if (vShading < 2)
+				if (vShading < 2) // If not Phong
 					gl_FragColor = fColor;
-				else 
+				else // Phong
 				{
 					vec4 color;
 					vec3 H = normalize( normalize(L) + normalize(E) );

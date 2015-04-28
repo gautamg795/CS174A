@@ -11,10 +11,12 @@ var sunLight = {
     specular: vec4(1.0, 0.8, 0.0, 1.0),
 }
 
+// Constructor for Planet objects
 function Planet(orbitalRadius, size, complexity, shading, material) {
     this.x = 0;
     this.y = 0;
     this.z = orbitalRadius;
+    // Randomize the starting theta
     this.theta = Math.floor(Math.random() * 1000) % 360;
     this.size = size;
     this.material = material;
@@ -33,6 +35,7 @@ function Planet(orbitalRadius, size, complexity, shading, material) {
 
 }
 
+// Used for multiplying a matrix * vector
 function multMatVec(u, v) {
     var result = [];
 
@@ -45,6 +48,8 @@ function multMatVec(u, v) {
     return result;
 }
 
+// Wrapper for the functions from the textbook to generate spheres.
+// normals == 0 for flat shading
 function sphere(nSub, normals) {
     function triangle(a, b, c) {
         if (normals == 0) {
@@ -219,14 +224,20 @@ window.onload = function init() {
             .toLowerCase();
         switch (key) {
             case 'a':
-                bindPlanet = !bindPlanet;
+                if (!bindPlanet) {
+                    bindPlanet = true;
+                    break;
+                }
+                bindPlanet = false;
                 /* fall through */
             case 'r':
                 camera.x = 0.0;
-                camera.y = -10.0;
+                camera.y = -12.0;
                 camera.z = -25.0;
                 camera.heading = 0;
                 camera.fovy = 50.0;
+                if (bindPlanet)
+                    bindPlanet = false;
                 break;
             case 'i':
                 var headingRad = radians(camera.heading);
@@ -286,12 +297,15 @@ function render() {
 
     // Generate the view matrix based off of the translation and rotation of the camera)
     var viewMatrix;
+    // Check if we should be bound to the outer planet
     if (bindPlanet) {
         var boundPlanet = planets[planets.length - 2];
+        // Find the eye position -- where the camera is
         var rot = rotate(boundPlanet.theta, [0, 1, 0]);
         var pos = vec4(boundPlanet.x, boundPlanet.y, boundPlanet.z - 1, 1);
         var eye = multMatVec(rot, pos);
         eye = eye.slice(0, 3);
+        // Find the 'at' position -- what we're looking at
         rot = rotate(camera.heading, [0, -1, 0]);
         var at = subtract([0, 0, 0], eye);
         at = at.concat(1);
@@ -304,6 +318,7 @@ function render() {
     }
     planets.forEach(function(planet, i) {
         var modelViewMatrix;
+        // If the planet is a moon, it requires extra math to put it around the previous planet
         if (planet.isMoon) {
             var basePlanet = planets[i - 1];
             modelViewMatrix = mult(translate(0, 0, 2), scale(planet.size, planet.size, planet.size));
@@ -316,17 +331,20 @@ function render() {
             modelViewMatrix = mult(rotate((i != 0) * planet.theta, [0, 1, 0]), modelViewMatrix);
             modelViewMatrix = mult(viewMatrix, modelViewMatrix);
             if (i == 0) {
+                // Send the suns's model-view matrix for use as the light location
                 gl.uniformMatrix4fv(lightLoc, false, flatten(modelViewMatrix));
             }
 
         }
+        // Rotate non-sun planets by a factor of their radius
         if (i > 0) {
             planet.theta += 2 / planet.z * 4;
-            if (planet.isMoon)
+            if (planet.isMoon) // Rotate moon faster
                 planet.theta += 1;
-            if (planet.theta > 360)
+            if (planet.theta > 360) // Protect against overflow
                 planet.theta %= 360;
         }
+        // Send...everything we need
         gl.uniformMatrix4fv(projectionLoc, false, flatten(projectionMatrix));
         gl.uniformMatrix4fv(modelViewLoc, false, flatten(modelViewMatrix));
         gl.uniform4fv(ambientProductLoc, mult(sunLight.ambient, planet.material.ambient));
@@ -335,6 +353,7 @@ function render() {
         gl.uniform1f(shininessLoc, planet.material.shininess);
         gl.uniform1i(shadingLoc, planet.shading);
         gl.uniform1i(isSunLoc, i == 0)
+        // Draw!
         gl.drawArrays(gl.TRIANGLES, planet.startIndex, planet.numPoints);
     })
     requestAnimFrame(render);
