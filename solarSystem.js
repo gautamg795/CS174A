@@ -33,17 +33,16 @@ function Planet(orbitalRadius, size, complexity, shading, material) {
 
 }
 
-function multMatVec( u, v )
-{
+function multMatVec(u, v) {
     var result = [];
-        
-        for ( var i = 0; i < u.length; ++i ) {
-            var sum = 0;
-            for (var j = 0; j < u.length; j++)
-                sum += u[i][j] * v[j]
-            result.push( sum );
-        }
-        return result;
+
+    for (var i = 0; i < u.length; ++i) {
+        var sum = 0;
+        for (var j = 0; j < u.length; j++)
+            sum += u[i][j] * v[j]
+        result.push(sum);
+    }
+    return result;
 }
 
 function sphere(nSub, normals) {
