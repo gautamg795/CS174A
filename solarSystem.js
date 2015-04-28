@@ -6,9 +6,9 @@ var bindPlanet = false;
 var pointsCache = new Object();
 
 var sunLight = {
-    ambient : vec4(0.8, 0.8, 0.8, 1.0),
-    diffuse : vec4(1.0, 0.8, 0.0, 1.0),
-    specular : vec4(1.0, 0.8, 0.0, 1.0),
+    ambient: vec4(0.8, 0.8, 0.8, 1.0),
+    diffuse: vec4(1.0, 0.8, 0.0, 1.0),
+    specular: vec4(1.0, 0.8, 0.0, 1.0),
 }
 
 function Planet(orbitalRadius, size, complexity, shading, material) {
@@ -26,10 +26,10 @@ function Planet(orbitalRadius, size, complexity, shading, material) {
     } else {
         this.startIndex = pointsArray.length;
         sphere(complexity, shading);
-        this.numPoints = pointsArray.length - this.startIndex;  
+        this.numPoints = pointsArray.length - this.startIndex;
         pointsCache[String(complexity) + "." + String(shading)] = [this.startIndex, this.numPoints];
     }
-        
+
 
 }
 
@@ -39,7 +39,7 @@ function multMatVec(u, v) {
     for (var i = 0; i < u.length; ++i) {
         var sum = 0;
         for (var j = 0; j < u.length; j++)
-            sum += u[i][j] * v[j]
+            sum += u[i][j] * v[j];
         result.push(sum);
     }
     return result;
@@ -76,6 +76,7 @@ function sphere(nSub, normals) {
             index += 3;
         }
     }
+
     function divideTriangle(a, b, c, count) {
         if (count > 0) {
 
@@ -130,46 +131,46 @@ window.onload = function init() {
     }
     // Sun
     planets.push(new Planet(0, 2.0, 5, 0, {
-        ambient : [1.3, 1.2, 0.0, 1.0],
-        diffuse : [1.0, 1.7, 0.0, 1.0],
+        ambient: [1.3, 1.2, 0.0, 1.0],
+        diffuse: [1.0, 1.7, 0.0, 1.0],
         specular: [1.0, 1.0, 1.0, 1.0],
-        shininess : 0.0
+        shininess: 0.0
     }));
     // Icy planet
     planets.push(new Planet(4, 1, 3, 0, {
-        ambient : [0.6, 0.6, 1.0, 1.0],
-        diffuse : [0.8, 0.8, 1.0, 1.0],
+        ambient: [0.6, 0.6, 1.0, 1.0],
+        diffuse: [0.8, 0.8, 1.0, 1.0],
         specular: [1.0, 1.0, 1.0, 0.0],
-        shininess : 20.0
+        shininess: 20.0
     }));
     // Swampy planet
     planets.push(new Planet(7, 1.2, 3, 1, {
-        ambient : [0.1, 0.3, 0.1, 1.0],
-        diffuse : [0.1, 0.5, 0.0, 1.0],
+        ambient: [0.1, 0.3, 0.1, 1.0],
+        diffuse: [0.1, 0.5, 0.0, 1.0],
         specular: [1.0, 1.0, 1.0, 1.0],
-        shininess : 30.0
+        shininess: 30.0
     }));
     // Water planet
     planets.push(new Planet(10, 1.4, 7, 2, {
-        ambient : [0.0, 0.2, 1.0, 1.0],
-        diffuse : [0.3, 0.3, 1.0, 1.0],
+        ambient: [0.0, 0.2, 1.0, 1.0],
+        diffuse: [0.3, 0.3, 1.0, 1.0],
         specular: [1.0, 1.0, 1.0, 1.0],
-        shininess : 100.0
+        shininess: 100.0
     }));
     // Muddy planet
     planets.push(new Planet(14, 1, 5, 1, {
-        ambient : [0.4, 0.2, 0.1, 1.0],
-        diffuse : [0.4, 0.2, 0.1, 1.0],
+        ambient: [0.4, 0.2, 0.1, 1.0],
+        diffuse: [0.4, 0.2, 0.1, 1.0],
         specular: [0.0, 0.0, 0.0, 0.0],
-        shininess : 0.0
+        shininess: 0.0
     }));
     // Moon
     planets.push(new Planet(14, .5, 4, 1, {
-        ambient : [0.3, 0.25, 0.45, 1.0],
-        diffuse : [0.6, 0.5, 0.9, 1.0],
+        ambient: [0.3, 0.25, 0.45, 1.0],
+        diffuse: [0.6, 0.5, 0.9, 1.0],
         specular: [1.0, 1.0, 1.0, 1.0],
-        shininess : 100.0
-        }));
+        shininess: 100.0
+    }));
 
     planets[planets.length - 1].isMoon = true;
     gl.viewport(0, 0, canvas.width, canvas.height); // Set viewport settings
@@ -191,12 +192,12 @@ window.onload = function init() {
     shadingLoc = gl.getUniformLocation(program, "vShading");
 
     var nBuffer = gl.createBuffer();
-    gl.bindBuffer( gl.ARRAY_BUFFER, nBuffer);
-    gl.bufferData( gl.ARRAY_BUFFER, flatten(normalsArray), gl.DYNAMIC_DRAW);
-    
-    var vNormal = gl.getAttribLocation( program, "vNormal" );
-    gl.vertexAttribPointer(vNormal, 4, gl.FLOAT, false, 0, 0 );
-    gl.enableVertexAttribArray( vNormal);
+    gl.bindBuffer(gl.ARRAY_BUFFER, nBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(normalsArray), gl.DYNAMIC_DRAW);
+
+    var vNormal = gl.getAttribLocation(program, "vNormal");
+    gl.vertexAttribPointer(vNormal, 4, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(vNormal);
 
     // Load the points into the GPU
     var vBuffer = gl.createBuffer();
@@ -314,7 +315,7 @@ function render() {
             modelViewMatrix = mult(translate(planet.x, planet.y, planet.z), scale(planet.size, planet.size, planet.size));
             modelViewMatrix = mult(rotate((i != 0) * planet.theta, [0, 1, 0]), modelViewMatrix);
             modelViewMatrix = mult(viewMatrix, modelViewMatrix);
-            if ( i == 0 ) {
+            if (i == 0) {
                 gl.uniformMatrix4fv(lightLoc, false, flatten(modelViewMatrix));
             }
 
