@@ -226,6 +226,7 @@ window.onload = function init() {
             case 'a':
                 if (!bindPlanet) {
                     bindPlanet = true;
+                    camera.heading = 0;
                     break;
                 }
                 bindPlanet = false;
