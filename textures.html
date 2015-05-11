@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html lang='en'>
+	<head>
+		<meta charset="utf-8" />
+		<title>CS174A Assignment 3</title>
+		<script id="vertex-shader" type="x-shader/x-vertex">
+			attribute  vec4 vPosition;
+			attribute  vec2 vTexCoord;
+
+			varying highp vec2 fTexCoord;
+
+			uniform mat4 modelView;
+			uniform mat4 projection;
+			void main() 
+			{		                
+			    fTexCoord = vTexCoord;
+			    gl_Position = projection * modelView * vPosition;
+			} 
+		</script>
+		<script id="fragment-shader" type="x-shader/x-fragment">
+			precision mediump float;
+			varying  vec2 fTexCoord;
+
+			uniform sampler2D texture;
+			uniform vec2 offset;
+			uniform float texTheta;
+			void
+			main()
+			{
+				float t = radians(texTheta);
+				vec2 newCoord = vec2((fTexCoord.s - 0.5)*cos(t) - (fTexCoord.t-0.5)*sin(t)+0.5, (fTexCoord.t-0.5)*cos(t) + (fTexCoord.s-0.5)*sin(t)+0.5);
+			    gl_FragColor = texture2D( texture, newCoord + offset);
+			}
+		</script>
+		<script type="text/javascript" src="webgl-utils.js"></script>
+		<script type="text/javascript" src="initShaders.js"></script>
+		<script type="text/javascript" src="MV.js"></script>
+		<script type="text/javascript" src="textures.js"></script>
+		<style type="text/css">
+		canvas {
+			display: block;
+			margin: 0 auto;
+		}
+		</style>
+	</head>
+	<body>
+		<canvas id="gl-canvas" width="960" height="540">
+		Oops ... your browser doesn't support the HTML5 canvas element
+		</canvas>
+		<img id="texImage1" src="friedman.gif" hidden></img>
+		<img id="texImage2" src="friedman2.gif" hidden></img>
+	</body>
+</html>
