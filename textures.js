@@ -15,6 +15,7 @@ var offset = vec2(0.0, 0.0);
 
 var rotation = true;
 var scrolling = true;
+var texRotation = true;
 
 var camera = {
     x: 0.0,
@@ -34,8 +35,8 @@ var yAxis = 1;
 var zAxis = 2;
 var axis = xAxis;
 var theta = [0, 0];
-
-var thetaLoc;
+var texTheta = 0;
+var texThetaLoc;
 
 function configureTexture(image) {
     var image = document.getElementById("texImage1");
@@ -46,9 +47,10 @@ function configureTexture(image) {
         gl.RGB, gl.UNSIGNED_BYTE, image);
     gl.generateMipmap(gl.TEXTURE_2D);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER,
-        gl.NEAREST_MIPMAP_LINEAR);
+        gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     image = document.getElementById("texImage2");
     gl.activeTexture(gl.TEXTURE1)
     texture = gl.createTexture();
@@ -57,18 +59,24 @@ function configureTexture(image) {
         gl.RGB, gl.UNSIGNED_BYTE, image);
     gl.generateMipmap(gl.TEXTURE_2D);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER,
-        gl.NEAREST_MIPMAP_LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-    
-  
+        gl.LINEAR_MIPMAP_LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);  
 }
 
 
 
 
 
-function generateCube() {
-    var texCoord = [
+function generateCube(flag) {
+    var texCoord = flag ? 
+    [
+        vec2(0, 0),
+        vec2(0, 2),
+        vec2(2, 2),
+        vec2(2, 0)
+    ]
+    :
+    [
         vec2(0, 0),
         vec2(0, 1),
         vec2(1, 1),
@@ -134,7 +142,7 @@ window.onload = function init() {
     program = initShaders(gl, "vertex-shader", "fragment-shader");
     gl.useProgram(program);
     generateCube();
-
+    generateCube(true);
 
     var vBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
@@ -171,11 +179,21 @@ window.onload = function init() {
             break;
         case 's':
             scrolling = !scrolling;
+            break;
+        case 't':
+            texRotation = !texRotation;
+            break;
+        case 'i':
+            camera.z++;
+            break;
+        case 'o':
+            camera.z--;
+            break;
         }
     };
     
 
-    thetaLoc = gl.getUniformLocation(program, "theta");
+    texThetaLoc = gl.getUniformLocation(program, "texTheta");
     projectionLoc = gl.getUniformLocation(program, "projection");
     modelViewLoc = gl.getUniformLocation(program, "modelView");
     render();
@@ -188,23 +206,28 @@ var render = function() {
     var viewMatrix = mult(rotate(camera.heading, [0, 1, 0]), translate(camera.x, camera.y, camera.z));
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     var models = [
-        translate(1, 1, 0),
-        translate(-1, -.5, 0)
+        translate(1.5, .25, 0),
+        translate(-1.5, -.25, 0)
     ];
     if (scrolling) {
         offset[1] += .005;
         if (offset[1] > 1) offset[1] -= 1.0;
     }
     for (var i = 0; i < models.length; i++) {
-        gl.uniform1f(gl.getUniformLocation(program, "texTheta"), !i ? theta[i] : 0);
+        if (i == 0) {
+            gl.uniform1f(texThetaLoc, texTheta);
+            if (texRotation) texTheta += 1.5;
+        }
+        else 
+            gl.uniform1f(texThetaLoc, 0.0);
         gl.uniform2fv(gl.getUniformLocation(program, "offset"), i ? offset : vec2(0,0));
         gl.uniform1i(gl.getUniformLocation(program, "texture"), i);
-        if (i == 1) 
+        // if (i == 1) 
             models[i] = mult(models[i], scale(2, 2, 2));
         var modelView = mult(viewMatrix, models[i]);
         modelView = mult(modelView, rotate(theta[i], [i, !i, 0]));
         gl.uniformMatrix4fv(modelViewLoc, false, flatten(modelView));
-        gl.drawArrays(gl.TRIANGLES, 0, numVertices);
+        gl.drawArrays(gl.TRIANGLES, i * numVertices, numVertices);
         if (rotation) theta[i] += 1.0 - i/2.0;
     }
     requestAnimFrame(render);
