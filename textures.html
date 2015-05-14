@@ -28,7 +28,9 @@
 			main()
 			{
 				float t = radians(texTheta);
+				// rotate the texture by theta (may be 0 for the second cube)
 				vec2 newCoord = vec2((fTexCoord.s - 0.5)*cos(t) - (fTexCoord.t-0.5)*sin(t)+0.5, (fTexCoord.t-0.5)*cos(t) + (fTexCoord.s-0.5)*sin(t)+0.5);
+				// Offset the coordinate to account for the texture sliding, if need be
 			    gl_FragColor = texture2D( texture, newCoord + offset);
 			}
 		</script>

@@ -222,7 +222,7 @@ var render = function() {
         else // Second cube, texture does not rotate
             gl.uniform1f(texThetaLoc, 0.0);
         // If this is the second cube, send an offset; otherwise send 0
-        gl.uniform2fv(gl.getUniformLocation(program, "offset"), i ? offset : vec2(0,0));
+        gl.uniform2fv(gl.getUniformLocation(program, "offset"), i ? vec2(offset[0] + 0.5, offset[1]+0.5): vec2(0,0));
         // Choose the texture unit to use
         gl.uniform1i(gl.getUniformLocation(program, "texture"), i);
         // Make the cubes bigger
