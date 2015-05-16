@@ -168,7 +168,7 @@ window.onload = function init() {
 
     // Set up key bindings
     window.onkeypress = function (event) {
-        var key = String.fromCharCode(event.keyCode)
+        var key = String.fromCharCode(event.keyCode || event.which)
             .toLowerCase();
         switch (key) {
         case 'r':
