@@ -1,0 +1,118 @@
+<!DOCTYPE HTML>
+<html lang='en'>
+	<head>
+		<meta charset="utf-8" />
+		<title>CS174A Assignment 2</title>
+		<script id="vertex-shader" type="x-shader/x-vertex">
+			attribute vec4 vPosition;
+			attribute vec4 vNormal;
+			varying vec4 fColor;
+
+			uniform mat4 modelView;
+			uniform mat4 projection;
+			
+			uniform int isSun;
+
+			uniform int vShading;
+			uniform mat4 lightPosition;
+			uniform vec4 ambientProduct;
+			uniform vec4 diffuseProduct;
+			uniform vec4 specularProduct; 
+			uniform float shininess;
+
+			varying vec3 N, L, E;
+
+			void main()
+			{
+				// These variables are common to Gouraud and Blinn-Phong
+				vec3 pos = (modelView * vPosition).xyz;
+				vec3 light = (lightPosition * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
+				L = light - pos;
+
+				E = -pos;
+				N = (modelView * vNormal).xyz;
+				if (vShading < 2) // If not Blinn-Phong
+				{
+					if (isSun < 1) // If not the sun
+					{
+						L = normalize(light - pos);
+
+						E = normalize(-pos);
+						N = normalize((modelView * vNormal).xyz);
+						vec4 ambient = ambientProduct;
+
+						float Kd = max(dot(L, N), 0.0);
+						vec4 diffuse = Kd * diffuseProduct;
+						vec3 H = normalize(L + E);
+						float Ks = pow(max(dot(N, H), 0.0), shininess);
+						vec4 specular = Ks * specularProduct;
+
+						if (dot(L, N) < 0.0) {
+							specular = vec4(0.0, 0.0, 0.0, 1.0);
+						}
+						fColor = ambient + diffuse + specular; 
+						fColor.a = 1.0;
+					}
+					else  
+					{
+						fColor = vec4(1.0, 0.8, 0.0, 1.0); // Sun is not lit; just yellow-red
+					}
+				}
+
+				gl_Position = projection * modelView  * vPosition;
+			}
+		</script>
+		<script id="fragment-shader" type="x-shader/x-fragment">
+			precision mediump float;
+			varying vec4 fColor;
+			uniform highp int vShading;
+			varying vec3 N, L, E;
+
+			uniform highp vec4 ambientProduct;
+			uniform highp vec4 diffuseProduct;
+			uniform highp vec4 specularProduct; 
+			uniform highp float shininess;
+
+			void
+			main()
+			{
+				if (vShading < 2) // If not Phong
+					gl_FragColor = fColor;
+				else // Phong
+				{
+					vec4 color;
+					vec3 H = normalize( normalize(L) + normalize(E) );
+				    vec4 ambient = ambientProduct;
+
+				    float Kd = max( dot(normalize(L), normalize(N)), 0.0 );
+				    vec4  diffuse = Kd*diffuseProduct;
+
+				    float Ks = pow( max(dot(normalize(N), H), 0.0), shininess );
+				    vec4  specular = Ks * specularProduct;
+				    
+				    if( dot(normalize(L), normalize(N)) < 0.0 ) 
+				    	specular = vec4(0.0, 0.0, 0.0, 1.0);
+
+				    color = ambient + diffuse +specular;
+				    color.a = 1.0;
+   					gl_FragColor = color;
+				}
+			}
+		</script>
+		<script type="text/javascript" src="webgl-utils.js"></script>
+		<script type="text/javascript" src="initShaders.js"></script>
+		<script type="text/javascript" src="MV.js"></script>
+		<script type="text/javascript" src="solarSystem.js"></script>
+		<style type="text/css">
+		canvas {
+			display: block;
+			margin: 0 auto;
+		}
+		</style>
+	</head>
+	<body>
+		<canvas id="gl-canvas" width="960" height="540">
+		Oops ... your browser doesn't support the HTML5 canvas element
+		</canvas>
+	</body>
+</html>
