@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html lang='en'>
+	<head>
+		<meta charset="utf-8" />
+		<title>CS174A Assignment 1</title>
+		<script id="vertex-shader" type="x-shader/x-vertex">
+			attribute vec4 vPosition;
+			uniform vec4 vColor;
+			varying vec4 fColor;
+			uniform mat4 modelViewProjection;
+			uniform float theta;
+			void main()
+			{
+				float angle = radians( theta );
+				float c = cos( angle );
+				float s = sin( angle );
+				// Matrix for rotating the cubes
+				mat4 rx = mat4( 1.0,  0.0,  0.0, 0.0,
+						0.0,  c,  s, 0.0,
+						0.0, -s,  c, 0.0,
+						0.0,  0.0,  0.0, 1.0 );
+				// Use sin(theta) for the scale factor so it cycles between 1.1x and .9x scale continuously
+				float scaleFactor = 1.0 + .1 * s;
+				mat4 scale = mat4(scaleFactor, 0.0, 0.0, 0.0,
+								  0.0, scaleFactor, 0.0, 0.0,
+								  0.0, 0.0, scaleFactor, 0.0,
+								  0.0, 0.0, 0.0, 1.0);
+				// Transforms applied right to left
+				gl_Position = modelViewProjection  * rx * scale * vPosition;
+				// Color passes through
+				fColor = vColor;
+			}
+		</script>
+		<script id="fragment-shader" type="x-shader/x-fragment">
+			precision mediump float;
+			varying vec4 fColor;
+
+			void
+			main()
+			{
+				gl_FragColor = fColor;
+			}
+		</script>
+		<script type="text/javascript" src="webgl-utils.js"></script>
+		<script type="text/javascript" src="initShaders.js"></script>
+		<script type="text/javascript" src="MV.js"></script>
+		<script type="text/javascript" src="cubes.js"></script>
+		<style type="text/css">
+		canvas {
+			display: block;
+			margin: 0 auto;
+		}
+		</style>
+	</head>
+	<body>
+		<canvas id="gl-canvas" width="960" height="540">
+		Oops ... your browser doesn't support the HTML5 canvas element
+		</canvas>
+	</body>
+</html>
